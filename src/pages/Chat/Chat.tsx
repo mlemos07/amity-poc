@@ -28,6 +28,21 @@ const Chat = () => {
   const putScrollAtEndPage = useCallback(() => {
     messageContainer.current.scrollTop = messageContainer.current.scrollHeight;
   }, []);
+  const userIsModerator = useCallback(
+    ({ data: users }: any) => {
+      const isModerator = !!users.find(
+        (currentUser: any) => currentUser.userId === user.id
+      );
+      setUser((prevState: any) => ({ ...prevState, isModerator }));
+    },
+    [setUser, user.id]
+  );
+  useEffect(() => {
+    ChannelRepository.Membership.searchMembers(
+      { channelId, roles: ["channel-moderator"] },
+      userIsModerator
+    );
+  }, [userIsModerator]);
   useEffect(() => {
     const joinChannel = async () => {
       try {
@@ -47,7 +62,6 @@ const Chat = () => {
       ChannelRepository.getChannel(
         channelId,
         ({ data: channel, loading, error }) => {
-          console.log("channel", channel);
           setChannelInfo(channel);
         }
       );
@@ -63,7 +77,7 @@ const Chat = () => {
           if (loading) {
           }
           if (messageList) {
-            console.log("messages na função", messageList);
+            // console.log("messages na função", messageList);
             setMessages(messageList.reverse());
           }
         }
@@ -144,8 +158,17 @@ const Chat = () => {
             }}
           >
             {messages.map((message: any) => (
-              <Message message={message} />
+              <Message key={message.messageId} message={message} />
             ))}
+            {/* <Message
+              message={{
+                metadata: {
+                  user: {
+                    name: "Marianna",
+                  },
+                },
+              }}
+            /> */}
           </Stack>
           <Stack
             alignItems="center"
