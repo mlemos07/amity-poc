@@ -14,6 +14,7 @@ import {
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { membersIcon, sendIcon } from "./assets";
 import { Context } from "../../Context";
+import Message from "./components/Message";
 
 const channelId = "660b04957644e27d41c87136";
 
@@ -143,16 +144,7 @@ const Chat = () => {
             }}
           >
             {messages.map((message: any) => (
-              <Typography key={message.messageId}>
-                <Typography
-                  component="span"
-                  display="inline"
-                  sx={{ color: "#3699FF", fontWeight: 600, mr: "4px" }}
-                >
-                  {message.metadata.user.name}:
-                </Typography>
-                {message.data.text}
-              </Typography>
+              <Message message={message} />
             ))}
           </Stack>
           <Stack
